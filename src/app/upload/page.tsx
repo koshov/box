@@ -25,8 +25,14 @@ export default function UploadPage() {
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then(async (response) => {
+    let isMounted = true;
+
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+
+        if (!isMounted) return;
+
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
@@ -34,10 +40,19 @@ export default function UploadPage() {
         } else {
           window.location.replace('/api/auth/login');
         }
-      })
-      .catch(() => {
-        window.location.replace('/api/auth/login');
-      });
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        if (isMounted) {
+          window.location.replace('/api/auth/login');
+        }
+      }
+    };
+
+    checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const formatFileSize = (bytes: number) => {

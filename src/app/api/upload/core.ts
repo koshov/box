@@ -18,16 +18,16 @@ export const ourFileRouter = {
     .middleware(async () => {
       // Get the authenticated user from Auth0
       const session = await auth0.getSession();
-      
+
       // If no user is authenticated, throw an error
       if (!session || !session.user) {
         throw new Error("Authentication required");
       }
-      
+
       const fileId = randomUUID();
-      return { 
+      return {
         userId: session.user.sub, // Auth0 user ID (subject)
-        fileId 
+        fileId
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
