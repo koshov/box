@@ -14,7 +14,7 @@ export const ourFileRouter = {
     "text/markdown": { maxFileSize: "2MB" },
     "text/csv": { maxFileSize: "2MB" }
   })
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       const fileId = randomUUID();
       return { userId: "user-123", fileId };
     })
