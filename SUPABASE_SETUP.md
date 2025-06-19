@@ -58,3 +58,28 @@ const { data: files } = await supabase
 ### 6. TypeScript Support
 
 Database types are defined in `src/types/database.ts` and are used throughout the Supabase client for full type safety.
+
+## Features
+
+### File Management Dashboard
+- **Home Page Integration**: Logged-in users see their uploaded files on the home page
+- **File Statistics**: Overview of total files, storage used, recent uploads, and file type breakdown
+- **File Cards**: Each file is displayed with metadata including:
+  - File icon based on content type
+  - File name and size
+  - Upload date
+  - Actions: View, Download, Delete
+
+### File Operations
+- **View Files**: Click to open files in a new tab
+- **Download Files**: Direct download with original filename
+- **Delete Files**: Remove files from database (with confirmation)
+
+### Security Features
+- **User Isolation**: Users can only see and manage their own files
+- **Auth0 Integration**: Seamless authentication with existing Auth0 setup
+- **Row Level Security**: Database-level security policies
+
+### API Endpoints
+- `GET /api/files` - List user's files (handled by component)
+- `DELETE /api/files/[fileId]` - Delete a specific file
