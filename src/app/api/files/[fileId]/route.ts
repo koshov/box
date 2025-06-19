@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { fileId: string } }
+  { params }: { params: Promise<{ fileId: string }> }
 ) {
   try {
     // Get the authenticated user from Auth0
@@ -17,7 +17,7 @@ export async function DELETE(
       );
     }
 
-    const fileId = params.fileId;
+    const { fileId } = await params;
     
     if (!fileId) {
       return NextResponse.json(
