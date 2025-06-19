@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function TestAuthPage() {
-  const [user, setUser] = useState<any>(null);
+  type User = {
+    id: string;
+    name?: string;
+    email?: string;
+    // Add other user fields as needed
+  };
+
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
   const checkAuth = async () => {
@@ -17,6 +25,7 @@ export default function TestAuthPage() {
         setUser(null);
       }
     } catch (error) {
+      console.error("Error checking authentication:", error);
       setUser(null);
     }
     setLoading(false);
@@ -54,27 +63,26 @@ export default function TestAuthPage() {
             >
               Refresh Status
             </button>
-
-            <a
+            <Link
               href="/api/auth/login"
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 inline-block"
             >
               Login
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/api/auth/logout"
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 inline-block"
             >
               Logout
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/upload"
               className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 inline-block"
             >
               Go to Upload Page
-            </a>
+            </Link>
           </div>
         </div>
       </div>

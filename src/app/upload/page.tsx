@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { UploadDropzone } from "@/utils/uploadthing";
+import Link from "next/link";
 
 interface UploadedFile {
   fileId: string;
@@ -13,7 +14,12 @@ interface UploadedFile {
 }
 
 export default function UploadPage() {
-  const [user, setUser] = useState<any>(null);
+  interface User {
+    name?: string;
+    email?: string;
+    [key: string]: unknown;
+  }
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -72,12 +78,12 @@ export default function UploadPage() {
             {user && (
               <div className="text-right">
                 <p className="text-sm text-gray-600">{user.email}</p>
-                <a
+                <Link
                   href="/api/auth/logout"
                   className="text-sm text-indigo-600 hover:text-indigo-800 underline"
                 >
                   Logout
-                </a>
+                </Link>
               </div>
             )}
           </div>
@@ -112,10 +118,9 @@ export default function UploadPage() {
                   const newFiles = res.map((file) => ({
                     fileId: file.serverData?.fileId || "unknown",
                     fileName: file.serverData?.fileName || file.name,
-                    fileUrl: file.serverData?.fileUrl || file.url,
+                    fileUrl: file.serverData?.fileUrl || file.ufsUrl,
                     fileSize: file.serverData?.fileSize || file.size,
                     uploadedBy: file.serverData?.uploadedBy || "unknown",
-                    blobUrl: file.serverData?.blobUrl,
                   }));
                   setUploadedFiles((prev) => [...prev, ...newFiles]);
                 }
