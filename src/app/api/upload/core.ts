@@ -1,6 +1,6 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { put } from "@vercel/blob";
 import { randomUUID } from "crypto";
+import { auth0 } from "@/lib/auth0";
 
 const f = createUploadthing();
 
@@ -15,38 +15,32 @@ export const ourFileRouter = {
     "text/csv": { maxFileSize: "2MB" }
   })
     .middleware(async () => {
+      // Get the authenticated user from Auth0
+      const session = await auth0.getSession();
+      
+      // If no user is authenticated, throw an error
+      if (!session || !session.user) {
+        throw new Error("Authentication required");
+      }
+      
       const fileId = randomUUID();
-      return { userId: "user-123", fileId };
+      return { 
+        userId: session.user.sub, // Auth0 user ID (subject)
+        fileId 
+      };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Upload complete for userId:", metadata.userId);
-      console.log("file url", file.url);
+      console.log("file url", file.ufsUrl);
 
-      try {
-        const blob = await put(`uploads/${metadata.fileId}-${file.name}`, file.ufsUrl, {
-          access: "public",
-        });
-
-        console.log("File stored in Vercel Blob:", blob.url);
-
-        return {
-          uploadedBy: metadata.userId,
-          fileId: metadata.fileId,
-          fileUrl: file.url,
-          blobUrl: blob.url,
-          fileName: file.name,
-          fileSize: file.size
-        };
-      } catch (error) {
-        console.error("Error storing file in Vercel Blob:", error);
-        return {
-          uploadedBy: metadata.userId,
-          fileId: metadata.fileId,
-          fileUrl: file.url,
-          fileName: file.name,
-          fileSize: file.size
-        };
-      }
+      return {
+        uploadedBy: metadata.userId,
+        fileId: metadata.fileId,
+        fileUrl: file.ufsUrl,
+        // blobUrl: blob.url,
+        fileName: file.name,
+        fileSize: file.size
+      };
     }),
 } satisfies FileRouter;
 
