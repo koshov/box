@@ -23,7 +23,8 @@ export default async function FileStats() {
     const supabase = await createClient();
     const { data: files, error } = await supabase
       .from('files')
-      .select('file_size, content_type, created_at');
+      .select('file_size, content_type, created_at')
+      .eq('user_id', session.user.sub);
 
     if (error) {
       console.error('Error fetching file stats:', error);

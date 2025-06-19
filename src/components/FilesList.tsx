@@ -17,6 +17,7 @@ export default async function FilesList() {
     const { data: files, error } = await supabase
       .from('files')
       .select('*')
+      .eq('user_id', session.user.sub)
       .order('created_at', { ascending: false });
 
     if (error) {
