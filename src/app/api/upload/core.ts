@@ -23,7 +23,7 @@ export const ourFileRouter = {
       console.log("file url", file.url);
 
       try {
-        const blob = await put(`uploads/${metadata.fileId}-${file.name}`, file.url, {
+        const blob = await put(`uploads/${metadata.fileId}-${file.name}`, file.ufsUrl, {
           access: "public",
         });
 
