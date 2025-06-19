@@ -44,6 +44,50 @@ function getFileIcon(contentType: string | null): string {
 
 export default function FileCard({ file }: FileCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
+  const [isLoadingUrl, setIsLoadingUrl] = useState(false);
+
+  // Function to get presigned URL for file access
+  const getPresignedUrl = async () => {
+    if (presignedUrl) return presignedUrl; // Use cached URL if available
+    
+    setIsLoadingUrl(true);
+    try {
+      const response = await fetch(`/api/files/${file.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPresignedUrl(data.presignedUrl);
+        return data.presignedUrl;
+      } else {
+        console.error('Failed to get presigned URL');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting presigned URL:', error);
+      return null;
+    } finally {
+      setIsLoadingUrl(false);
+    }
+  };
+
+  const handleView = async () => {
+    const url = await getPresignedUrl();
+    if (url) {
+      window.open(url, '_blank');
+    }
+  };
+
+  const handleDownload = async () => {
+    const url = await getPresignedUrl();
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.file_name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm(`Are you sure you want to delete "${file.file_name}"?`)) {
@@ -94,21 +138,20 @@ export default function FileCard({ file }: FileCardProps) {
       </div>
       
       <div className="mt-4 flex space-x-2">
-        <a
-          href={file.file_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+        <button
+          onClick={handleView}
+          disabled={isLoadingUrl}
+          className="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          View
-        </a>
-        <a
-          href={file.file_url}
-          download={file.file_name}
-          className="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+          {isLoadingUrl ? 'Loading...' : 'View'}
+        </button>
+        <button
+          onClick={handleDownload}
+          disabled={isLoadingUrl}
+          className="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Download
-        </a>
+          {isLoadingUrl ? 'Loading...' : 'Download'}
+        </button>
         <button
           onClick={handleDelete}
           disabled={isDeleting}

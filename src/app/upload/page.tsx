@@ -7,10 +7,11 @@ import Link from "next/link";
 interface UploadedFile {
   fileId: string;
   fileName: string;
-  fileUrl: string;
+  fileUrl: string; // This will be the presigned URL
   fileSize: number;
   uploadedBy: string;
   blobUrl?: string;
+  presignedUrl?: string; // Store presigned URL separately
 }
 
 export default function UploadPage() {
@@ -61,6 +62,48 @@ export default function UploadPage() {
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
+
+  // Function to get presigned URL for a file
+  const getPresignedUrl = async (fileId: string) => {
+    try {
+      const response = await fetch(`/api/files/${fileId}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.presignedUrl;
+      } else {
+        console.error('Failed to get presigned URL for file:', fileId);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting presigned URL:', error);
+      return null;
+    }
+  };
+
+  // Function to handle file viewing with presigned URL
+  const handleFileView = async (fileId: string) => {
+    const url = await getPresignedUrl(fileId);
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      alert('Unable to access file. Please try again.');
+    }
+  };
+
+  // Function to handle file download with presigned URL
+  const handleFileDownload = async (fileId: string, fileName: string) => {
+    const url = await getPresignedUrl(fileId);
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert('Unable to download file. Please try again.');
+    }
   };
 
   if (loading) {
@@ -205,10 +248,8 @@ export default function UploadPage() {
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <a
-                        href={file.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => handleFileView(file.fileId)}
                         className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -216,20 +257,16 @@ export default function UploadPage() {
                           <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
                         </svg>
                         View
-                      </a>
+                      </button>
 
                       <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(file.fileUrl);
-                          alert('File URL copied to clipboard!');
-                        }}
+                        onClick={() => handleFileDownload(file.fileId, file.fileName)}
                         className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                          <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                          <path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" />
                         </svg>
-                        Copy URL
+                        Download
                       </button>
 
                       <button
