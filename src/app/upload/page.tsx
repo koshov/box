@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UploadDropzone } from "@/utils/uploadthing";
 
 interface UploadedFile {
@@ -13,8 +13,26 @@ interface UploadedFile {
 }
 
 export default function UploadPage() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(async (response) => {
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+          setLoading(false);
+        } else {
+          window.location.replace('/api/auth/login');
+        }
+      })
+      .catch(() => {
+        window.location.replace('/api/auth/login');
+      });
+  }, []);
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
@@ -24,9 +42,47 @@ export default function UploadPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        {/* User Info Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              File Upload Center
+            </h1>
+            {user && (
+              <p className="text-lg text-gray-600">
+                Welcome back, {user.name || user.email || 'User'}!
+              </p>
+            )}
+          </div>
+          <div className="flex items-center space-x-4">
+            {user && (
+              <div className="text-right">
+                <p className="text-sm text-gray-600">{user.email}</p>
+                <a
+                  href="/api/auth/logout"
+                  className="text-sm text-indigo-600 hover:text-indigo-800 underline"
+                >
+                  Logout
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             File Upload Center
