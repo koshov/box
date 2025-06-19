@@ -1,6 +1,7 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { randomUUID } from "crypto";
 import { auth0 } from "@/lib/auth0";
+import { createClient } from "@/utils/supabase/server";
 
 const f = createUploadthing();
 
@@ -32,6 +33,36 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Upload complete for userId:", metadata.userId);
       console.log("file url", file.ufsUrl);
+
+      // Create Supabase client
+      const supabase = await createClient();
+
+      // Prepare file data for database
+      const fileData = {
+        id: metadata.fileId,
+        user_id: metadata.userId,
+        file_name: file.name,
+        file_size: file.size,
+        file_url: file.ufsUrl,
+        content_type: file.type,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Insert file record into database
+      const { data, error } = await supabase
+        .from('files')
+        .insert(fileData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving file to database:', error);
+        // You might want to handle this error differently based on your needs
+        throw new Error('Failed to save file metadata to database');
+      }
+
+      console.log('File metadata saved to database:', data);
 
       return {
         uploadedBy: metadata.userId,
