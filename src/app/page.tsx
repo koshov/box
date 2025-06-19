@@ -2,6 +2,7 @@ import { auth0 } from "@/lib/auth0";
 import FilesList from "@/components/FilesList";
 import FileStats from "@/components/FileStats";
 import './globals.css';
+import Link from "next/link";
 
 export default async function Home() {
   // Fetch the user session
@@ -16,7 +17,7 @@ export default async function Home() {
             Welcome back, {session.user.name}!
           </h1>
           <div className="flex items-center space-x-4">
-            <a
+            <Link
               href="/upload"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -24,13 +25,13 @@ export default async function Home() {
                 <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
               Upload Files
-            </a>
-            <a
+            </Link>
+            <Link
               href="/api/auth/logout"
               className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
               Log out
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -53,18 +54,18 @@ export default async function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <a
+              <Link
                 href="/api/auth/login"
                 className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Log in
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/api/auth/login?screen_hint=signup"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Sign up
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -81,18 +82,18 @@ export default async function Home() {
               Store, organize, and share your files with ease. BOX makes file management effortless with secure cloud storage and intuitive sharing.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/api/auth/login?screen_hint=signup"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors"
               >
                 Get Started Free
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#features"
                 className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg text-lg font-medium transition-colors bg-white"
               >
                 Learn More
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -152,7 +153,7 @@ export default async function Home() {
               Simple, transparent pricing
             </h2>
             <p className="text-xl text-gray-600">
-              Choose the plan that's right for you
+              Choose the plan that is right for you
             </p>
           </div>
 
@@ -192,12 +193,12 @@ export default async function Home() {
                 </li>
               </ul>
 
-              <a
+              <Link
                 href="/api/auth/login?screen_hint=signup"
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 px-6 rounded-lg text-center block font-medium transition-colors"
               >
                 Get Started
-              </a>
+              </Link>
             </div>
 
             {/* Standard Tier */}
@@ -247,12 +248,12 @@ export default async function Home() {
                 </li>
               </ul>
 
-              <a
+              <Link
                 href="/api/auth/login?screen_hint=signup"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg text-center block font-medium transition-colors"
               >
                 Get Started
-              </a>
+              </Link>
             </div>
 
             {/* Pro Tier */}
@@ -296,12 +297,12 @@ export default async function Home() {
                 </li>
               </ul>
 
-              <a
+              <Link
                 href="/api/auth/login?screen_hint=signup"
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 px-6 rounded-lg text-center block font-medium transition-colors"
               >
                 Get Started
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -316,12 +317,12 @@ export default async function Home() {
           <p className="text-xl text-blue-100 mb-8">
             Join thousands of users who trust BOX with their files
           </p>
-          <a
+          <Link
             href="/api/auth/login?screen_hint=signup"
             className="bg-white hover:bg-gray-100 text-blue-600 px-8 py-3 rounded-lg text-lg font-medium transition-colors inline-block"
           >
             Start Free Today
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -339,30 +340,30 @@ export default async function Home() {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Features</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Security</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">API</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Help Center</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Status</Link></li>
               </ul>
             </div>
           </div>
