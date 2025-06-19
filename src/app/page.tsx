@@ -5,7 +5,7 @@ export default async function Home() {
   // Fetch the user session
   const session = await auth0.getSession();
 
-  // If no session, show sign-up and login buttons
+  // If no session, show sign-up and login button
   if (!session) {
     return (
       <main>
